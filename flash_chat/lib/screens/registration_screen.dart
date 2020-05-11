@@ -1,6 +1,8 @@
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import '../widgets/round_button.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static String id = 'register';
@@ -9,6 +11,8 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  String email, password;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +35,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                email = value;
               },
               textAlign: TextAlign.center,
               keyboardType: TextInputType.emailAddress,
@@ -43,7 +47,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             TextField(
               onChanged: (value) {
-                //Do something with the user input.
+                password = value;
               },
               textAlign: TextAlign.center,
               obscureText: true,
@@ -56,7 +60,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             RoundButton(
               label: 'Register',
               color: Colors.blueAccent,
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  AuthResult res = await _auth.createUserWithEmailAndPassword(
+                      email: email, password: password);
+                  if (res != null) {
+                    Navigator.pushNamed(context, ChatScreen.id);
+                  }
+                } catch (e) {
+                  print(e);
+                }
+              },
             ),
           ],
         ),
